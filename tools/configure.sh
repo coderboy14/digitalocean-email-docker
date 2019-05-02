@@ -22,6 +22,22 @@ fetchFile() {
     curl -s "${REPOURL}/${1}.gz" | gunzip -c - > $2
 }
 
+if [$USE_SELF_SIGNED]; then
+    echo "[SSL] Generating self signed key..."
+    openssl req -x509 -newkey rsa:4096 -keyout ${CERTIFICATE_KEY} -out ${CERTIFICATE} -days 365 -nodes
+    echo "[SSL] Self signed key generated!"
+fi
+
+if [$USE_LETSENCRYPT]; then
+    echo "[SSL] Starting LETSENCRYPT"
+    /usr/local/bin/certbot-auto certonly --standalone -d ${FQDN}
+    cp ${LETSENCRYPT_ROOT}/fullchain.pem ${CERTIFICATE}
+    echo "[SSL][LETSENCRYPT] Transfering CERTIFICATE"
+    cp ${LETSENCRYPT_ROOT}/privkey.pem ${CERTIFICATE_KEY}
+    echo "[SSL][LETSENCRYPT] Transfering KEY"
+    echo "[SSL] Key generated!"
+fi
+
 # If the main.cf doesn't exist, it must need configuring!
 if [ -f "/etc/postfix/main.cf" ]; then
     echo "[Postfix] Fetching files..."
@@ -144,12 +160,13 @@ if [ -f "/etc/dovecot/dovecot.conf" ]; then
     echo "[Dovecot] Downloading files"
 
     fetchFile "files/dovecot/dovecot.conf" "/etc/dovecot/dovecot.conf"
-    fetchFolder "files/dovecot/conf.d.tar.gz" "/etc/dovecot/conf.d"
+    fetchDirrectory "files/dovecot/conf.d.tar.gz" "/etc/dovecot/conf.d"
     mkdir -p /etc/dovecot/private
 
     sh -c "mkdir -p /var/mail/vhosts/${DOMAIN}"
 
-    if ["$(id -u vmail > /dev/null 2>&1; echo $?)" == 1]; then
+    USERNOTEXISTS=$(id -u vmail > /dev/null 2>&1; echo $?) 
+    if [$USERNOTEXISTS == 1]; then
         echo "Creating system user 'vmail' with group 'vmail'..."
         groupadd -g 5000 vmail 
         useradd -g vmail -u 5000 vmail -d /var/mail
@@ -173,22 +190,6 @@ if [ -f "/etc/dovecot/dovecot.conf" ]; then
 
     chown -R vmail:dovecot /etc/dovecot
     chmod -R o-rwx /etc/dovecot 
-fi
-
-if [$USE_SELF_SIGNED]; then
-    echo "[SSL] Generating self signed key..."
-    openssl req -x509 -newkey rsa:4096 -keyout ${CERTIFICATE_KEY} -out ${CERTIFICATE} -days 365 -nodes
-    echo "[SSL] Self signed key generated!"
-fi
-
-if [$USE_LETSENCRYPT]; then
-    echo "[SSL] Starting LETSENCRYPT"
-    /usr/local/bin/certbot-auto certonly --standalone -d ${FQDN}
-    cp ${LETSENCRYPT_ROOT}/fullchain.pem ${CERTIFICATE}
-    echo "[SSL][LETSENCRYPT] Transfering CERTIFICATE"
-    cp ${LETSENCRYPT_ROOT}/privkey.pem ${CERTIFICATE_KEY}
-    echo "[SSL][LETSENCRYPT] Transfering KEY"
-    echo "[SSL] Key generated!"
 fi
 
 #echo "" >> /etc/dovecot/
