@@ -1,6 +1,7 @@
 # Postfix automatic configuration tool
 
 REPOURL="https://raw.githubusercontent.com/coderboy14/digitalocean-email-docker/master/"
+LETSENCRYPT_ROOT = "/etc/letsencrypt/archive/${FDQN}/"
 CERTIFICATE='/etc/ssl/certs/dovecot.pem'
 CERTIFICATE_KEY='/etc/ssl/private/dovecot.pem'
 
@@ -12,13 +13,13 @@ runSQL() {
 fetchDirrectory() {
     # ARG1: Dirrectory Name
     # ARG2: Dirrectory Output
-    curl "${REPOURL}/${1}" | tar -xv --strip-components=1 -C $2 -
+    curl -s "${REPOURL}/${1}" | tar -xv --strip-components=1 -C $2 -
 }
 
 fetchFile() {
     # ARG1: File Name
     # ARG2: File Output
-    curl "${REPOURL}/${1}.gz" | gunzip -c - > $2
+    curl -s "${REPOURL}/${1}.gz" | gunzip -c - > $2
 }
 
 # If the main.cf doesn't exist, it must need configuring!
@@ -32,11 +33,8 @@ if [ -f "/etc/postfix/main.cf" ]; then
     fetchFile "files/postfix/postfix-files" "/etc/postfix/postfix-files"
     fetchFile "files/postfix/postfix-script" "/etc/postfix/postfix-script"
     mkdir -pv /etc/postfix/{dynamicmaps.cf.d,postfix-files.d,sasl}
-
     echo "[Postfix] Fetched files!"
 
-    curl "{$REPOURL}/postfix.tar.gz" | \
-    tar -xv --strip-components=1 -C /etc/postfix/ -
     echo "[Postfix] Configuring postfix files..."
     echo "[Postfix] Configuring '/etc/postfix/main.cf'..."
     echo "" > /etc/postfix/main.cf # clear the file (just in case)
@@ -71,7 +69,7 @@ if [ -f "/etc/postfix/main.cf" ]; then
     echo "smtpd_tls_key_file=${CERTIFICATE_KEY}" >> /etc/postfix/main.cf
     echo 'smtpd_use_tls=yes' >> /etc/postfix/main.cf
     echo 'smtpd_tls_auth_only = yes' >> /etc/postfix/main.cf
-    echo "[Postfix] SSL configured! Place certificate at '${CERTPATH}', and place key at '${KEYPATH}'"
+    echo "[Postfix] SSL configured! Place certificate at '${CERTIFICATE}', and place key at '${CERTIFICATE_KEY}'"
     touch /etc/postfix/mysql-virtual-mailbox-domains.cf
     echo "
     user = ${DB_MAIL_USERNAME}
@@ -175,6 +173,22 @@ if [ -f "/etc/dovecot/dovecot.conf" ]; then
 
     chown -R vmail:dovecot /etc/dovecot
     chmod -R o-rwx /etc/dovecot 
+fi
+
+if [$USE_SELF_SIGNED]; then
+    echo "[SSL] Generating self signed key..."
+    openssl req -x509 -newkey rsa:4096 -keyout ${CERTIFICATE_KEY} -out ${CERTIFICATE} -days 365 -nodes
+    echo "[SSL] Self signed key generated!"
+fi
+
+if [$USE_LETSENCRYPT]; then
+    echo "[SSL] Starting LETSENCRYPT"
+    /usr/local/bin/certbot-auto certonly --standalone -d ${FQDN}
+    cp ${LETSENCRYPT_ROOT}/fullchain.pem ${CERTIFICATE}
+    echo "[SSL][LETSENCRYPT] Transfering CERTIFICATE"
+    cp ${LETSENCRYPT_ROOT}/privkey.pem ${CERTIFICATE_KEY}
+    echo "[SSL][LETSENCRYPT] Transfering KEY"
+    echo "[SSL] Key generated!"
 fi
 
 #echo "" >> /etc/dovecot/

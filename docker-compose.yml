@@ -3,5 +3,18 @@ services:
   fullstack:
     container_name: "FullMail"
     build: images/19w18a/single
+    enviroment:
+      - FQDN=mail.localhost
+      - DOMAIN=localhost
+      - DB_HOST=localhost
+      - DB_USER=root
+      - DB_PASSWORD=password
+      - HOSTNAME=localhost
+      - DB_NAME=email
+      - DB_MAIL_USERNAME=mailer
+      - DB_MAIL_PASSWORD=password
+      - USE_LETSENCRYPT=no
+      - USE_SELF_SIGNED=yes
     volumes:
       - "./mount/etc/postfix:/etc/postfix"
+      - "./mount/etc/dovecot:/etc/dovecot"
