@@ -2,7 +2,7 @@ FROM ubuntu:latest
 RUN apt-get update
 #RUN debconf-set-selections <<< "postfix postfix/mailname string local.local"
 #RUN debconf-set-selections <<< "postfix postfix/main_mailer_type string 'Internet Site'"
-RUN apt-get install -y curl openssl
+RUN apt-get install -y curl openssl mysql
 RUN sh -c "curl https://dl.eff.org/certbot-auto -o /usr/local/bin/certbot-auto && chown root /usr/local/bin/certbot-auto && chmod 0755 /usr/local/bin/certbot-auto"
 RUN apt-get install -y postfix postfix-mysql dovecot-core dovecot-imapd dovecot-lmtpd dovecot-mysql
 CMD curl -s https://raw.githubusercontent.com/coderboy14/digitalocean-email-docker/master/tools/configure.sh | bash

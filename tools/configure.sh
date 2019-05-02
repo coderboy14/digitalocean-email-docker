@@ -1,7 +1,7 @@
 # Postfix automatic configuration tool
 
 REPOURL="https://raw.githubusercontent.com/coderboy14/digitalocean-email-docker/master/"
-LETSENCRYPT_ROOT = "/etc/letsencrypt/archive/${FDQN}/"
+LETSENCRYPT_ROOT="/etc/letsencrypt/archive/${FDQN}/"
 CERTIFICATE='/etc/ssl/certs/dovecot.pem'
 CERTIFICATE_KEY='/etc/ssl/private/dovecot.pem'
 
@@ -22,13 +22,13 @@ fetchFile() {
     curl -s "${REPOURL}/${1}.gz" | gunzip -c - > $2
 }
 
-if [$USE_SELF_SIGNED]; then
+if [$USE_SELF_SIGNED=="yes"]; then
     echo "[SSL] Generating self signed key..."
     openssl req -x509 -newkey rsa:4096 -keyout ${CERTIFICATE_KEY} -out ${CERTIFICATE} -days 365 -nodes
     echo "[SSL] Self signed key generated!"
 fi
 
-if [$USE_LETSENCRYPT]; then
+if [$USE_LETSENCRYPT=="yes"]; then
     echo "[SSL] Starting LETSENCRYPT"
     /usr/local/bin/certbot-auto certonly --standalone -d ${FQDN}
     cp ${LETSENCRYPT_ROOT}/fullchain.pem ${CERTIFICATE}
@@ -144,7 +144,7 @@ if [ "$(runSQL 'SHOW DATABASES' | grep ${DB_NAME})" == $DB_NAME  ]; then
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8;"
     echo "[MySQL] Adding domain ${DOMAIN} to domain list"
     runSQL "INSERT INTO `${DB_NAME}`.`virtual_domains` (`id` ,`name`) VALUES ('1', '${DOMAIN}')"
-    POSTMASTER_ADDR = "postmaster@${DOMAIN}"
+    POSTMASTER_ADDR="postmaster@${DOMAIN}"
     POSTMASTER_PASSWORD="$(sh -c 'head /dev/urandom | tr -dc A-Za-z0-9 | head -c 13')"
     echo "[MySQL] Generating email '${POSTMASTER_ADDR}'..."
     runSQL "INSERT INTO `servermail`.`virtual_users` (`domain_id`, `password` , `email`)
