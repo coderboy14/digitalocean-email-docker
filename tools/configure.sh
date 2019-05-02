@@ -22,20 +22,22 @@ fetchFile() {
     curl -s "${REPOURL}/${1}.gz" | gunzip -c - > $2
 }
 
-if [$USE_SELF_SIGNED=="yes"]; then
-    echo "[SSL] Generating self signed key..."
-    openssl req -x509 -newkey rsa:4096 -keyout ${CERTIFICATE_KEY} -out ${CERTIFICATE} -days 365 -nodes
-    echo "[SSL] Self signed key generated!"
-fi
+if [ -f "${CERTIFICATE_KEY}" ]; then
+    if ["${USE_SELF_SIGNED}"=="yes"]; then
+        echo "[SSL] Generating self signed key..."
+        openssl req -x509 -newkey rsa:4096 -keyout ${CERTIFICATE_KEY} -out ${CERTIFICATE} -days 365 -nodes
+        echo "[SSL] Self signed key generated!"
+    fi
 
-if [$USE_LETSENCRYPT=="yes"]; then
-    echo "[SSL] Starting LETSENCRYPT"
-    /usr/local/bin/certbot-auto certonly --standalone -d ${FQDN}
-    cp ${LETSENCRYPT_ROOT}/fullchain.pem ${CERTIFICATE}
-    echo "[SSL][LETSENCRYPT] Transfering CERTIFICATE"
-    cp ${LETSENCRYPT_ROOT}/privkey.pem ${CERTIFICATE_KEY}
-    echo "[SSL][LETSENCRYPT] Transfering KEY"
-    echo "[SSL] Key generated!"
+    if ["${USE_LETSENCRYPT}"=="yes"]; then
+        echo "[SSL] Starting LETSENCRYPT"
+        /usr/local/bin/certbot-auto certonly --standalone -d ${FQDN}
+        cp ${LETSENCRYPT_ROOT}/fullchain.pem ${CERTIFICATE}
+        echo "[SSL][LETSENCRYPT] Transfering CERTIFICATE"
+        cp ${LETSENCRYPT_ROOT}/privkey.pem ${CERTIFICATE_KEY}
+        echo "[SSL][LETSENCRYPT] Transfering KEY"
+        echo "[SSL] Key generated!"
+    fi
 fi
 
 # If the main.cf doesn't exist, it must need configuring!
