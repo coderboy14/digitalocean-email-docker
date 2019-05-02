@@ -1,6 +1,6 @@
 # Postfix automatic configuration tool
 
-REPOURL="https://github.com/coderboy14/digitalocean-email-docker/"
+REPOURL="https://raw.githubusercontent.com/coderboy14/digitalocean-email-docker/master/"
 CERTIFICATE='/etc/ssl/certs/dovecot.pem'
 CERTIFICATE_KEY='/etc/ssl/private/dovecot.pem'
 
