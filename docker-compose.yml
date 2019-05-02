@@ -1,0 +1,7 @@
+version: "3"
+services:
+  fullstack:
+    container_name: "FullMail"
+    build: images/19w18a/single
+    volumes:
+      - "./mount/etc/postfix:/etc/postfix"
