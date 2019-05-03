@@ -1,0 +1,3 @@
+# DigitalOcean Email Docker
+This is a Dockerized version of the email server setup in this tutorial https://www.digitalocean.com/community/tutorials/how-to-configure-a-mail-server-using-postfix-dovecot-mysql-and-spamassassin#-step-4-configure-dovecot
+An example `docker-compose.yml` file is included with this repository. The `dockerfile` is located at `images/{version}/single/`. At the time of writing, the latest version is `19w18a` and `single` is the variation of the image. Currently all components are in a single Docker container, but once all the bugs have been worked out, another image variation will be created with all components in seperate containers managed by a `docker-compose.yml` file.

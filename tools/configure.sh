@@ -28,7 +28,6 @@ if [ -f "${CERTIFICATE_KEY}" ]; then
         openssl req -x509 -newkey rsa:4096 -keyout ${CERTIFICATE_KEY} -out ${CERTIFICATE} -days 365 -nodes
         echo "[SSL] Self signed key generated!"
     fi
-
     if ["${USE_LETSENCRYPT}"=="yes"]; then
         echo "[SSL] Starting LETSENCRYPT"
         /usr/local/bin/certbot-auto certonly --standalone -d ${FQDN}
