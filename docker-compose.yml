@@ -20,6 +20,8 @@ services:
       - "./mount/logs:/var/log"
     links:
       - db
+    depends_on:
+      - db
   db:
     image: mysql/mysql-server
     restart: unless-stopped
