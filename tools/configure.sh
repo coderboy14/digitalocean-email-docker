@@ -6,7 +6,7 @@ CERTIFICATE='/etc/ssl/certs/dovecot.pem'
 CERTIFICATE_KEY='/etc/ssl/private/dovecot.pem'
 
 runSQL() {
-    mysql --host "${DB_HOST}" --user "${DB_USER}" -p "${DB_PASSWORD}" -e "${1}"
+    mysql --host "${DB_HOST}" --user "${DB_USER}" -p"${DB_PASSWORD}" -e "${1}"
 }
 
 fetchFile() {
