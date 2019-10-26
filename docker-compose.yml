@@ -18,7 +18,7 @@ services:
       - "./mount/etc/postfix:/etc/postfix"
       - "./mount/etc/dovecot:/etc/dovecot"
       - "./mount/logs:/var/log"
-    link:
+    links:
       - db
   db:
     image: mysql/mysql-server
