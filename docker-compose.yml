@@ -18,3 +18,13 @@ services:
       - "./mount/etc/postfix:/etc/postfix"
       - "./mount/etc/dovecot:/etc/dovecot"
       - "./mount/logs:/var/log"
+    link:
+      - db
+  db:
+    image: mysql/mysql-server
+    restart: unless-stopped
+    environment:
+      - MYSQL_ROOT_HOST=%
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_USER=mailuser
+      - MYSQL_PASSWORD=password
