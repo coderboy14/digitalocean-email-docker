@@ -1,3 +1,4 @@
 Launching!
+Connecting to MySQL Server root@10.0.0.231 with password 'abc'!
 [AUTOCONFIG]  Configuration finished. Will now restart POSTFIX and DOVECOT. This may cause your Docker Container to stop. 
     If you have volumes enabled properly, the system will not reconfigure upon next startup.

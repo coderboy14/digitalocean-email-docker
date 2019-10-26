@@ -6,8 +6,7 @@ CERTIFICATE='/etc/ssl/certs/dovecot.pem'
 CERTIFICATE_KEY='/etc/ssl/private/dovecot.pem'
 
 runSQL() {
-    mysql --host "${DB_HOST}" --user "${DB_USER}" --password "${DB_PASSWORD}" \
-    -e "${1}"
+    mysql --host "${DB_HOST}" --user "${DB_USER}" --password "${DB_PASSWORD}" -e "${1}"
 }
 
 fetchFile() {
@@ -16,7 +15,7 @@ fetchFile() {
     curl -s "${REPOURL}/${1}.gz" > $2
 }
 
-__main() {
+main() {
     echo "Launching!"
     echo "Connecting to MySQL Server ${DB_USER}@${DB_HOST} with password '${DB_PASSWORD}'!"
 
@@ -230,5 +229,6 @@ __main() {
     service dovecot restart
 }
 
-echo "Launching"
-__main > /var/log/doemaillog
+echo "Launching..."
+echo "[PRE] Server Connection to MySQL Server ${DB_USER}@${DB_HOST} with password '${DB_PASSWORD}'!"
+main

@@ -18,4 +18,3 @@ services:
       - "./mount/etc/postfix:/etc/postfix"
       - "./mount/etc/dovecot:/etc/dovecot"
       - "./mount/logs:/var/log"
-    restart: unless-stopped
