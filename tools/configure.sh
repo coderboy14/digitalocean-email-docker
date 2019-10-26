@@ -12,7 +12,7 @@ runSQL() {
 fetchFile() {
     # ARG1: File Name
     # ARG2: File Output
-    curl -s "${REPOURL}/${1}.gz" > $2
+    curl -s "${REPOURL}/${1}" > $2
 }
 
 main() {
