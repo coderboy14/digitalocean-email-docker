@@ -3,7 +3,7 @@ services:
   fullstack:
     container_name: "FullMail"
     build: images/19w18a/single
-    enviroment:
+    environment:
       - FQDN=mail.localhost
       - DOMAIN=localhost
       - DB_HOST=localhost
@@ -18,3 +18,4 @@ services:
     volumes:
       - "./mount/etc/postfix:/etc/postfix"
       - "./mount/etc/dovecot:/etc/dovecot"
+      - "./mount/logs:/var/log"
