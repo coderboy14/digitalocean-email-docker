@@ -18,6 +18,7 @@ fetchFile() {
 
 __main() {
     echo "Launching!"
+    echo "Connecting to MySQL Server ${DB_USER}@${DB_HOST} with password '${DB_PASSWORD}'!"
 
     if [ -f "${CERTIFICATE_KEY}" ]; then
         if ["${USE_SELF_SIGNED}"=="yes"]; then

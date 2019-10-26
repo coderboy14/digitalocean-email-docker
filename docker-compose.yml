@@ -5,9 +5,9 @@ services:
     environment:
       - FQDN=mail.localhost
       - DOMAIN=localhost
-      - DB_HOST=localhost
+      - DB_HOST=10.0.0.231
       - DB_USER=root
-      - DB_PASSWORD=password
+      - DB_PASSWORD=abc
       - HOSTNAME=localhost
       - DB_NAME=email
       - DB_MAIL_USERNAME=mailer
@@ -18,12 +18,4 @@ services:
       - "./mount/etc/postfix:/etc/postfix"
       - "./mount/etc/dovecot:/etc/dovecot"
       - "./mount/logs:/var/log"
-      - "./mount/sql/run:/var/run/mysqld"
-    restart: unless-stopped
-    depends_on:
-      - "db"
-  db:
-    image: mysql/mysql-server
-    volumes:
-      - "./mount/sql/run:/var/run/mysqld"
     restart: unless-stopped
