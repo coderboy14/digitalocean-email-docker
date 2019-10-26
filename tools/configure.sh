@@ -10,16 +10,10 @@ runSQL() {
     -e "${1}"
 }
 
-fetchDirrectory() {
-    # ARG1: Dirrectory Name
-    # ARG2: Dirrectory Output
-    curl -s "${REPOURL}/${1}" | tar -xv --strip-components=1 -C $2 -
-}
-
 fetchFile() {
     # ARG1: File Name
     # ARG2: File Output
-    curl -s "${REPOURL}/${1}.gz" | gunzip -c - > $2
+    curl -s "${REPOURL}/${1}.gz" > $2
 }
 
 __main() {
@@ -164,7 +158,33 @@ __main() {
         echo "[Dovecot] Downloading files"
 
         fetchFile "files/dovecot/dovecot.conf" "/etc/dovecot/dovecot.conf"
-        fetchDirrectory "files/dovecot/conf.d.tar.gz" "/etc/dovecot/conf.d"
+
+        mkdir "/etc/dovecot/conf.d"
+        
+        fetchFile "files/dovecot/conf.d/10-auth.conf"	                "/etc/dovecot/conf.d/10-auth.conf"
+        fetchFile "files/dovecot/conf.d/10-director.conf"	            "/etc/dovecot/conf.d/10-director.conf"
+        fetchFile "files/dovecot/conf.d/10-logging.conf"	            "/etc/dovecot/conf.d/10-logging.conf"
+        fetchFile "files/dovecot/conf.d/10-mail.conf"	                "/etc/dovecot/conf.d/10-mail.conf"
+        fetchFile "files/dovecot/conf.d/10-master.conf"	            "/etc/dovecot/conf.d/10-master.conf"
+        fetchFile "files/dovecot/conf.d/10-ssl.conf"	                "/etc/dovecot/conf.d/10-ssl.conf"
+        fetchFile "files/dovecot/conf.d/10-tcpwrapper.conf"	        "/etc/dovecot/conf.d/10-tcpwrapper.conf"
+        fetchFile "files/dovecot/conf.d/15-lda.conf"	                "/etc/dovecot/conf.d/15-lda.conf"
+        fetchFile "files/dovecot/conf.d/15-mailboxes.conf"	        "/etc/dovecot/conf.d/15-mailboxes.conf"
+        fetchFile "files/dovecot/conf.d/20-imap.conf"	                "/etc/dovecot/conf.d/20-imap.conf"
+        fetchFile "files/dovecot/conf.d/20-lmtp.conf"	                "/etc/dovecot/conf.d/20-lmtp.conf"
+        fetchFile "files/dovecot/conf.d/90-acl.conf"	                "/etc/dovecot/conf.d/90-acl.conf"
+        fetchFile "files/dovecot/conf.d/90-plugin.conf"	            "/etc/dovecot/conf.d/90-plugin.conf"
+        fetchFile "files/dovecot/conf.d/90-quota.conf"	            "/etc/dovecot/conf.d/90-quota.conf"
+        fetchFile "files/dovecot/conf.d/auth-checkpassword.conf.ext"	"/etc/dovecot/conf.d/auth-checkpassword.conf.ext"
+        fetchFile "files/dovecot/conf.d/auth-deny.conf.ext"	        "/etc/dovecot/conf.d/auth-deny.conf.ext"
+        fetchFile "files/dovecot/conf.d/auth-dict.conf.ext"	        "/etc/dovecot/conf.d/auth-dict.conf.ext"
+        fetchFile "files/dovecot/conf.d/auth-master.conf.ext"	        "/etc/dovecot/conf.d/auth-master.conf.ext"
+        fetchFile "files/dovecot/conf.d/auth-passwdfile.conf.ext"	    "/etc/dovecot/conf.d/auth-passwdfile.conf.ext"
+        fetchFile "files/dovecot/conf.d/auth-sql.conf.ext"	        "/etc/dovecot/conf.d/auth-sql.conf.ext"
+        fetchFile "files/dovecot/conf.d/auth-static.conf.ext"	        "/etc/dovecot/conf.d/auth-static.conf.ext"
+        fetchFile "files/dovecot/conf.d/auth-system.conf.ext"	        "/etc/dovecot/conf.d/auth-system.conf.ext"
+        fetchFile "files/dovecot/conf.d/auth-vpopmail.conf.ext"	    "/etc/dovecot/conf.d/auth-vpopmail.conf.ext"
+
         mkdir -p /etc/dovecot/private
 
         sh -c "mkdir -p /var/mail/vhosts/${DOMAIN}"
@@ -209,4 +229,5 @@ __main() {
     service dovecot restart
 }
 
+echo "Launching"
 __main > /var/log/doemaillog
